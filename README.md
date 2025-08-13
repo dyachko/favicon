@@ -1,69 +1,40 @@
-# React + TypeScript + Vite
+# Favicon Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Minimal, fast, client‑side favicon generator. Load an image, crop 1:1, preview sizes in the export list, and download either a ZIP with common favicon files or individual PNGs. Everything runs locally in your browser.
 
-Currently, two official plugins are available:
+## Features
+- Image choose (drag & drop or click), PNG/JPG/SVG
+- Crop 1:1 with zoom
+- Export:
+  - ZIP with ready files and HTML snippet
+  - Individual PNG files: 16/32/48/64, apple‑touch‑icon (180), android‑chrome (192/512)
+- Optional favicon.ico and more sizes can be added later
+- No server, private by design
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Quick start
+```bash
+npm install
+npm run dev
+# open http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Build
+```bash
+npm run build
+npm run preview
 ```
+
+## Deploy (GitHub Pages)
+This repo is configured to deploy via GitHub Actions.
+- Production base path is taken from `BASE_PATH` env (defaults to `/`).
+- For this repository it is `/favicon/`.
+
+Manual build artifact is in `dist/`.
+
+## Tech stack
+- React + TypeScript + Vite
+- react-easy-crop for cropping
+- fflate for ZIP
+
+## Privacy
+All processing happens in the browser. Your images are not uploaded anywhere.
