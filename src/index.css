@@ -1,0 +1,154 @@
+/* base theme */
+:root {
+  --bg: #0b0c0e;
+  --bg-elev: #14161a;
+  --text: #e6e8eb;
+  --muted: #9aa2ad;
+  --primary: #6ea8fe;
+  --border: #262a31;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --bg-elev: #f6f7f9;
+    --text: #0b0c0e;
+    --muted: #5b6573;
+    --primary: #4f46e5;
+    --border: #e5e7eb;
+  }
+}
+
+/* reset-ish */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--primary); text-decoration: none; }
+
+button {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  color: var(--text);
+  cursor: pointer;
+}
+button:hover { border-color: var(--primary); }
+button:disabled { opacity: .6; cursor: not-allowed; }
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.title {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 28px; height: 28px; border-radius: 999px; object-fit: cover; border: 1px solid var(--border); }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 1100px) {
+  .grid { grid-template-columns: 400px 1fr; }
+}
+
+.card {
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.section-title { font-weight: 700; margin: 0 0 12px; font-size: 16px; color: var(--muted); }
+.card .section-title { color: var(--text); font-size: 18px; }
+.input {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.badge { display: inline-block; border: 1px solid var(--border); padding: 4px 8px; border-radius: 999px; font-size: 12px; color: var(--muted);} 
+.icon-btn { border: 1px solid var(--border); background: var(--bg-elev); color: var(--muted); height: 32px; width: 32px; border-radius: 8px; display: grid; place-items: center; cursor: pointer; padding: 0; line-height: 0; } 
+.icon-btn.help { cursor: help; }
+.icon-btn:hover { border-color: var(--primary); color: var(--text); }
+.icon-btn svg { display: block; }
+
+/* Tooltip */
+.tooltip { position: relative; display: inline-block; }
+.tooltip-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 420px;
+  max-width: min(560px, 90vw);
+  background: var(--bg-elev);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  font-size: 12px;
+  line-height: 1.35;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 10;
+}
+.tooltip-panel::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 12px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent var(--bg-elev) transparent;
+}
+.tooltip:hover .tooltip-panel,
+.tooltip:focus-within .tooltip-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* dropdown */
+.dropdown { position: relative; }
+.dropdown .menu-panel {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  background: var(--bg-elev); color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px;
+  min-width: 220px; padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  opacity: 0; transform: translateY(-4px); pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 10;
+}
+.dropdown.open .menu-panel { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.menu-item { width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: transparent; border: none; color: inherit; cursor: pointer; }
+.menu-item:hover { background: rgba(255,255,255,0.04); }
+.menu-item.active { outline: 1px solid var(--primary); }
+.menu-item .code { width: 36px; font-weight: 700; color: var(--muted); }
+.menu-item .name { flex: 1; }
