@@ -30,6 +30,8 @@ const MESSAGES: Record<Locale, Record<string, any>> = {
     purpose_pwa: 'PWA, Splash',
     downloadOne: (n:string)=> `Download ${n}`,
     lang_en: 'English', lang_ru: 'Русский', lang_es: 'Español', lang_fr: 'Français', lang_pt: 'Português',
+    icoLabel: 'favicon.ico',
+    purpose_ico: 'ICO container (16/32/48)'
   },
   ru: {
     appTitle: 'Генератор фавиконок',
@@ -37,7 +39,7 @@ const MESSAGES: Record<Locale, Record<string, any>> = {
     selectImageTitle: 'Выбор изображения',
     imageSelected: 'Изображение выбрано. Нажмите, чтобы заменить.',
     dragOrClick: 'Перетащите PNG/JPG/SVG сюда или нажмите для выбора',
-    cropTitle: 'Кроп 1:1',
+    cropTitle: 'Обрезка до квадрата',
     cropHint: 'Выберите изображение, чтобы кропнуть.',
     scale: 'Масштаб',
     exportTitle: 'Экспорт',
@@ -53,6 +55,8 @@ const MESSAGES: Record<Locale, Record<string, any>> = {
     purpose_pwa: 'PWA, Splash',
     downloadOne: (n:string)=> `Скачать ${n}`,
     lang_en: 'English', lang_ru: 'Русский', lang_es: 'Español', lang_fr: 'Français', lang_pt: 'Português',
+    icoLabel: 'favicon.ico',
+    purpose_ico: 'Контейнер ICO (16/32/48)'
   },
   es: {
     appTitle: 'Generador de favicon',
@@ -76,6 +80,8 @@ const MESSAGES: Record<Locale, Record<string, any>> = {
     purpose_pwa: 'PWA, Splash',
     downloadOne: (n:string)=> `Descargar ${n}`,
     lang_en: 'English', lang_ru: 'Русский', lang_es: 'Español', lang_fr: 'Français', lang_pt: 'Português',
+    icoLabel: 'favicon.ico',
+    purpose_ico: 'Contenedor ICO (16/32/48)'
   },
   fr: {
     appTitle: 'Générateur de favicon',
@@ -99,6 +105,8 @@ const MESSAGES: Record<Locale, Record<string, any>> = {
     purpose_pwa: 'PWA, Splash',
     downloadOne: (n:string)=> `Télécharger ${n}`,
     lang_en: 'English', lang_ru: 'Русский', lang_es: 'Español', lang_fr: 'Français', lang_pt: 'Português',
+    icoLabel: 'favicon.ico',
+    purpose_ico: 'Conteneur ICO (16/32/48)'
   },
   pt: {
     appTitle: 'Gerador de favicon',
@@ -122,6 +130,8 @@ const MESSAGES: Record<Locale, Record<string, any>> = {
     purpose_pwa: 'PWA, Splash',
     downloadOne: (n:string)=> `Baixar ${n}`,
     lang_en: 'English', lang_ru: 'Русский', lang_es: 'Español', lang_fr: 'Français', lang_pt: 'Português',
+    icoLabel: 'favicon.ico',
+    purpose_ico: 'Contêiner ICO (16/32/48)'
   },
 }
 
@@ -190,9 +200,9 @@ function App() {
       </div>
 
       <div className="grid">
-        <div className="card" onDragOver={(e)=>e.preventDefault()} onDrop={onDrop}>
+        <div className="card" onDragOver={(e)=>e.preventDefault()} onDrop={onDrop} onClick={()=>fileInputRef.current?.click()} role="button" tabIndex={0} onKeyDown={(e)=>{ if (e.key==='Enter' || e.key===' ') { e.preventDefault(); fileInputRef.current?.click() } }} style={{ cursor: 'pointer' }}>
           <div className="section-title">{t('selectImageTitle')}</div>
-          <div className="input" onClick={()=>fileInputRef.current?.click()}>
+          <div className="input">
             {hasImage ? (
               <div>{t('imageSelected')}</div>
             ) : (
@@ -275,6 +285,8 @@ function ExportButtons({ imageSrc, cropArea, locale }: { imageSrc: string | null
   const onZip = async () => {
     if (!imageSrc) return
     const files = await generateCorePngs(imageSrc, cropArea)
+    const ico = await generateFaviconIco(imageSrc, cropArea, [16,32,48])
+    files.push({ name: 'favicon.ico', blob: ico })
     const zipBlob = await importZip(files)
     downloadBlob(zipBlob, `favicons-${timestamp()}.zip`)
   }
@@ -291,6 +303,12 @@ function ExportButtons({ imageSrc, cropArea, locale }: { imageSrc: string | null
     ]
   ), [locale])
 
+  const onIco = async () => {
+    if (!imageSrc) return
+    const ico = await generateFaviconIco(imageSrc, cropArea, [16,32,48])
+    downloadBlob(ico, 'favicon.ico')
+  }
+
   const downloadOne = async (size: number, name: string) => {
     if (!imageSrc) return
     const blob = await generatePngOfSize(imageSrc, cropArea, size)
@@ -306,6 +324,21 @@ function ExportButtons({ imageSrc, cropArea, locale }: { imageSrc: string | null
         <>
           <div className="section-title">{t('downloadIndividually')}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, border: '1px solid var(--border)', borderRadius: 12, padding: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <CanvasThumb src={imageSrc} size={32} cropArea={cropArea} />
+                <div>
+                  <div style={{ fontWeight: 600 }}>{t('icoLabel')}</div>
+                  <div style={{ color: 'var(--muted)', fontSize: 12 }}>{t('purpose_ico')}</div>
+                </div>
+              </div>
+              <button onClick={onIco} aria-label={t('icoLabel')} title={t('icoLabel')} style={{ height: 36, width: 36, display: 'grid', placeItems: 'center', padding: 0 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3v10m0 0l4-4m-4 4l-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M20 21H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
             {items.map((it) => (
               <div key={it.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, border: '1px solid var(--border)', borderRadius: 12, padding: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -422,21 +455,50 @@ async function importZip(files: Array<{ name: string; blob: Blob }>): Promise<Bl
     const buf = new Uint8Array(await f.blob.arrayBuffer())
     fileMap[f.name] = buf
   }
-  // add snippet
-  const snippet = snippetHtml()
-  fileMap['README-snippet.html'] = new TextEncoder().encode(snippet)
   const zipped = zipSync(fileMap, { level: 9 })
   return new Blob([zipped], { type: 'application/zip' })
 }
 
-function snippetHtml() {
-  return [
-    '<!-- Include in <head> -->',
-    '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">',
-    '<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">',
-    '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">',
-    '<link rel="manifest" href="/site.webmanifest">',
-  ].join('\n')
+
+// Build favicon.ico by embedding PNG images for sizes (16/32/48/64)
+async function generateFaviconIco(src: string, area: CropArea | null, sizes: number[] = [16,32,48,64]): Promise<Blob> {
+  const images: { size: number; data: Uint8Array }[] = []
+  for (const s of sizes) {
+    const blob = await generatePngOfSize(src, area, s)
+    const buf = new Uint8Array(await blob.arrayBuffer())
+    images.push({ size: s, data: buf })
+  }
+  const n = images.length
+  const headerSize = 6
+  const dirSize = 16 * n
+  const totalImageBytes = images.reduce((acc, im) => acc + im.data.byteLength, 0)
+  const totalSize = headerSize + dirSize + totalImageBytes
+  const out = new Uint8Array(totalSize)
+  const view = new DataView(out.buffer)
+
+  // Header
+  view.setUint16(0, 0, true) // reserved
+  view.setUint16(2, 1, true) // ICO type
+  view.setUint16(4, n, true) // number of images
+
+  // Directory entries
+  let offset = headerSize + dirSize
+  for (let i = 0; i < n; i++) {
+    const { size, data } = images[i]
+    const base = headerSize + i * 16
+    out[base + 0] = size === 256 ? 0 : size // width
+    out[base + 1] = size === 256 ? 0 : size // height
+    out[base + 2] = 0 // color palette
+    out[base + 3] = 0 // reserved
+    view.setUint16(base + 4, 1, true) // color planes
+    view.setUint16(base + 6, 32, true) // bits per pixel
+    view.setUint32(base + 8, data.byteLength, true) // size of data
+    view.setUint32(base + 12, offset, true) // offset of data
+    out.set(data, offset)
+    offset += data.byteLength
+  }
+
+  return new Blob([out], { type: 'image/x-icon' })
 }
 
 let __downloadAnchor: HTMLAnchorElement | null = null
